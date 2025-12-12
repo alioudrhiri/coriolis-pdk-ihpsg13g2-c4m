@@ -1,6 +1,5 @@
 
 from pathlib import Path
-from coriolis.designflow.technos import Where
 from coriolis.designflow.task    import ShellEnv
 from .designflow.filler          import Filler
 from .designflow.sealring        import SealRing
@@ -13,7 +12,7 @@ pdkMasterTop = None
 pdkIHPTop    = None
 
 
-def setup ( checkToolkit=None ):
+def setup ( ):
     global pdkMasterTop
     global pdkIHPTop
 
@@ -48,7 +47,6 @@ def setup ( checkToolkit=None ):
     pdkMasterTop = Path( __file__ ).parent
     pdkIHPTop    = pdkMasterTop.parent / 'ihpsg13g2'
 
-    Where( checkToolkit )
 
     techno_setup()
     StdCellLib_setup()
@@ -92,7 +90,6 @@ def setup ( checkToolkit=None ):
     DRC.setDrcRules( kdrcRulesMin, DRC.Minimal )
     DRC.setDrcRules( kdrcRulesMax, DRC.Maximal )
     DRC.setDrcRules( kdrcRulesC4M, DRC.C4M )
-    ShellEnv.CHECK_TOOLKIT = Where.checkToolkit.as_posix()
     ShellEnv.PDK_ROOT      = pdkIHPTop.parent.as_posix()
     ShellEnv.PDK           = 'ihpsg13g2'
     ShellEnv.KLAYOUT_PATH  = '{}:{}'.format( klayoutHome, klayoutTech )
@@ -103,13 +100,12 @@ def setup ( checkToolkit=None ):
     TasYagle.flags         = TasYagle.Transistor
     TasYagle.SpiceType     = 'hspice'
     TasYagle.SpiceTrModel  = [ 'mos_tt.lib' ]
-    TasYagle.OSDIdll       = verilogATech / 'psp103' / 'psp103_nqs.osdi'
+    TasYagle.OSDIdll       = ngspiceTech / 'openvaf' / 'psp103_nqs.osdi'
     TasYagle.MBK_CATA_LIB  = '.:' + (ngspiceTech / 'models').as_posix() \
                            + ':' + (pdkMasterTop).as_posix() \
                            + ':' + (pdkMasterTop/'libs.ref'/'StdCellLib'/'spice').as_posix()
     Lvx.MBK_CATA_LIB  = TasYagle.MBK_CATA_LIB
     x2y.MBK_CATA_LIB  = TasYagle.MBK_CATA_LIB
-    TasYagle.MBK_SPI_MODEL = pdkMasterTop / 'spimodel.cfg'
     TasYagle.Temperature   = 25.0
     TasYagle.VddSupply     = 1.8 
     TasYagle.VddName       = 'vdd'
